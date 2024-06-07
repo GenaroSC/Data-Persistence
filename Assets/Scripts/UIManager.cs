@@ -9,9 +9,13 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     public TMP_InputField userNameInput;
+    public TextMeshProUGUI bestScore;
 
     private void Start()
     {
+        DataManager.Instance.LoadBestScore();
+
+        bestScore.text = "Best Score: " + DataManager.Instance.bestScore;
         userNameInput.onEndEdit.AddListener(delegate { UpdateText(); }) ;
     }
 

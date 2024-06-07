@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class MainManager : MonoBehaviour
 {
@@ -12,11 +14,13 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public TextMeshProUGUI playerText;
+    public Text bestScoreUserText;
     public Text ScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
     private int m_Points;
+    private string bestScoreString = "Best Score :";
     
     private bool m_GameOver = false;
 
@@ -25,6 +29,7 @@ public class MainManager : MonoBehaviour
     void Start()
     {
         playerText.text = $"Welcome {DataManager.Instance.userName}";
+        bestScoreUserText.text = $"{bestScoreString}\n{DataManager.Instance.bestUser} : {DataManager.Instance.bestScore}";
 
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
@@ -63,6 +68,10 @@ public class MainManager : MonoBehaviour
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
+            else if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                SceneManager.LoadScene(0);
+            }
         }
     }
 
@@ -75,6 +84,17 @@ public class MainManager : MonoBehaviour
     public void GameOver()
     {
         m_GameOver = true;
+
+        if (m_Points > Int32.Parse(DataManager.Instance.bestScore))
+        {
+            DataManager.Instance.bestScore = m_Points.ToString();
+            DataManager.Instance.bestUser = DataManager.Instance.userName;
+
+            bestScoreUserText.text = bestScoreString + "\n" + DataManager.Instance.bestUser + " : " + DataManager.Instance.bestScore;
+
+            DataManager.Instance.SaveBestScore();
+        }
+
         GameOverText.SetActive(true);
     }
 }
